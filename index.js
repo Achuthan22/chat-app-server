@@ -5,11 +5,12 @@ const Msg = require("./models/message");
 const errorHandler = require("./middleware/errorhandler");
 const connection = require("./config/dbConnection");
 require("dotenv").config();
-
+const cors = require("cors");
 const app = express();
 
+app.use(cors());
 app.use(express.json());
-//app.use("/api/users", require("./routers/userRoutes"));
+app.use("/api/users", require("./routers/userRoutes"));
 app.use(errorHandler);
 
 //connection();
@@ -21,7 +22,6 @@ const io = require("socket.io")(httpServer, {
 });
 
 io.on("connection", (socket) => {
-  
   Msg.find().then((result) => {
     console.log(result.sort((item) => item.timeOfDelivery));
     socket.emit("message", result);
